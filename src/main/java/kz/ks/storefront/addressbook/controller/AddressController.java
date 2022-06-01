@@ -3,7 +3,6 @@ package kz.ks.storefront.addressbook.controller;
 import kz.ks.storefront.addressbook.controller.dto.AddressDTO;
 import kz.ks.storefront.addressbook.controller.dto.PersistentAddressDTO;
 import kz.ks.storefront.addressbook.converter.AddressModelPersistentConverter;
-import kz.ks.storefront.addressbook.enums.CoordinateSystem;
 import kz.ks.storefront.addressbook.model.AddressModel;
 import kz.ks.storefront.addressbook.model.GeoPoint;
 import kz.ks.storefront.addressbook.repository.AddressRepository;
@@ -15,8 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @RestController
 @RequiredArgsConstructor
@@ -63,7 +60,7 @@ public class AddressController {
                 .owner(existingCustomer)
                 .visible(true)
                 .geoPoint(GeoPoint.builder()
-                        .coordinateSystem(addressDTO.getCoordinateSystem())
+                        .coordinateSystem(addressDTO.getCs())
                         .lon(addressDTO.getLon())
                         .lat(addressDTO.getLat())
                         .build())
@@ -106,7 +103,7 @@ public class AddressController {
                             GeoPoint.builder()
                                     .lat(addressDTO.getLat())
                                     .lon(addressDTO.getLon())
-                                    .coordinateSystem(addressDTO.getCoordinateSystem())
+                                    .coordinateSystem(addressDTO.getCs())
                                     .build()
                     );
                     addressRepository.save(a);

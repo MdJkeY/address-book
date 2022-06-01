@@ -24,7 +24,7 @@ public class AddressDTO {
     private double lat;
     private double lon;
     @JsonProperty("coordinate_system")
-    private CoordinateSystem coordinateSystem;
+    private CoordinateSystem cs;
 
     private boolean visible;
 

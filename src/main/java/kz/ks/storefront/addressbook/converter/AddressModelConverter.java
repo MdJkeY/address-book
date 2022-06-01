@@ -17,7 +17,7 @@ public class AddressModelConverter implements Converter<AddressModel, AddressDTO
                 .visible(source.isVisible())
                 .lat(source.getGeoPoint().getLat())
                 .lon(source.getGeoPoint().getLon())
-                .coordinateSystem(source.getGeoPoint().getCoordinateSystem())
+                .cs(source.getGeoPoint().getCoordinateSystem())
                 .build();
     }
 }
