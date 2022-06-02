@@ -1,7 +1,6 @@
 package kz.ks.storefront.addressbook.model;
 
 import kz.ks.storefront.addressbook.enums.CoordinateSystem;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;

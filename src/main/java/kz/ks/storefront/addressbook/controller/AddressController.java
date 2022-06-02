@@ -3,8 +3,8 @@ package kz.ks.storefront.addressbook.controller;
 import kz.ks.storefront.addressbook.controller.dto.AddressDTO;
 import kz.ks.storefront.addressbook.controller.dto.PersistentAddressDTO;
 import kz.ks.storefront.addressbook.converter.AddressModelPersistentConverter;
+import kz.ks.storefront.addressbook.converter.GeoPointDtoConverter;
 import kz.ks.storefront.addressbook.model.AddressModel;
-import kz.ks.storefront.addressbook.model.GeoPoint;
 import kz.ks.storefront.addressbook.repository.AddressRepository;
 import kz.ks.storefront.addressbook.repository.CustomerRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +21,8 @@ public class AddressController {
     private final AddressRepository addressRepository;
     private final CustomerRepository customerRepository;
     private final ConversionService conversionService;
+    private final GeoPointDtoConverter geoPointDtoConverter;
+    private final AddressModelPersistentConverter addressModelPersistentConverter;
 
     @GetMapping("/address/find")
     public List<PersistentAddressDTO> getListByIdAndCityId(@RequestParam("cid") String customerId,
@@ -30,7 +32,7 @@ public class AddressController {
         );
 
         AddressModelPersistentConverter addressModelPersistentConverter = new AddressModelPersistentConverter();
-        return addressModelPersistentConverter.convert(existingCustomer.getAddressesByCityId(cityId));
+        return addressModelPersistentConverter.converting(existingCustomer.getAddressesByCityId(cityId));
     }
 
     @GetMapping("/address/{addressId}")
@@ -46,28 +48,20 @@ public class AddressController {
 
     @PostMapping("/address")
     public PersistentAddressDTO create(@RequestBody AddressDTO addressDTO) {
+//        Clarification is required!!!
         var existingCustomer =
                 customerRepository.findByGci(addressDTO.getCustomerGci())
                         .orElseThrow(
                                 () -> new ResponseStatusException(HttpStatus.BAD_REQUEST)
                         );
 
-        var newAddress = AddressModel.builder()
-                .cityId(addressDTO.getCityId())
-                .streetName(addressDTO.getStreetName())
-                .apartment(addressDTO.getApartment())
-                .house(addressDTO.getHouse())
-                .owner(existingCustomer)
-                .visible(true)
-                .geoPoint(GeoPoint.builder()
-                        .coordinateSystem(addressDTO.getCs())
-                        .lon(addressDTO.getLon())
-                        .lat(addressDTO.getLat())
-                        .build())
-                .build();
+        var newAddress = conversionService.convert(addressDTO, AddressModel.class);
+        newAddress.setOwner(existingCustomer);
+
         addressRepository.save(newAddress);
 
-        return conversionService.convert(newAddress, PersistentAddressDTO.class);
+
+        return addressModelPersistentConverter.convert(newAddress);
     }
 
     @DeleteMapping("/address/{addressId}")
@@ -99,13 +93,7 @@ public class AddressController {
                     a.setApartment(addressDTO.getApartment());
                     a.setOwner(existingCustomer);
                     a.setVisible(addressDTO.isVisible());
-                    a.setGeoPoint(
-                            GeoPoint.builder()
-                                    .lat(addressDTO.getLat())
-                                    .lon(addressDTO.getLon())
-                                    .coordinateSystem(addressDTO.getCs())
-                                    .build()
-                    );
+                    a.setGeoPoint(geoPointDtoConverter.convert(addressDTO.getGeoPointDTO()));
                     addressRepository.save(a);
                 },
                 () -> {

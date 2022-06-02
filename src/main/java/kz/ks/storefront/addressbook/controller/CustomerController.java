@@ -1,10 +1,7 @@
 package kz.ks.storefront.addressbook.controller;
 
 import kz.ks.storefront.addressbook.controller.dto.CustomerDTO;
-import kz.ks.storefront.addressbook.controller.dto.PersistentAddressDTO;
 import kz.ks.storefront.addressbook.controller.dto.PersistentCustomerDTO;
-import kz.ks.storefront.addressbook.converter.AddressModelPersistentConverter;
-import kz.ks.storefront.addressbook.model.AddressModel;
 import kz.ks.storefront.addressbook.model.CustomerModel;
 import kz.ks.storefront.addressbook.repository.CustomerRepository;
 import lombok.RequiredArgsConstructor;

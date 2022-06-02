@@ -2,7 +2,6 @@ package kz.ks.storefront.addressbook;
 
 
 import kz.ks.storefront.addressbook.controller.AddressController;
-import kz.ks.storefront.addressbook.controller.dto.AddressDTO;
 import kz.ks.storefront.addressbook.enums.CoordinateSystem;
 import kz.ks.storefront.addressbook.model.AddressModel;
 import kz.ks.storefront.addressbook.model.CustomerModel;
