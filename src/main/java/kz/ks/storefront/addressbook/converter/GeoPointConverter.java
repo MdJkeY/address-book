@@ -17,3 +17,4 @@ public class GeoPointConverter implements Converter<GeoPoint, GeoPointDTO> {
                 .build();
     }
 }
+

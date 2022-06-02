@@ -40,7 +40,7 @@ public class AddressController {
         var existingAddress = addressRepository.findById(addressId);
 
         return existingAddress.map(
-                a -> conversionService.convert(a, PersistentAddressDTO.class)
+                addressModelPersistentConverter::convert
         ).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND)
         );
@@ -56,6 +56,8 @@ public class AddressController {
                         );
 
         var newAddress = conversionService.convert(addressDTO, AddressModel.class);
+
+        assert newAddress != null;
         newAddress.setOwner(existingCustomer);
 
         addressRepository.save(newAddress);

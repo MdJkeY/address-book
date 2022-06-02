@@ -14,8 +14,7 @@ import java.util.List;
 
 @Component
 public class AddressModelPersistentConverter implements Converter<AddressModel, PersistentAddressDTO> {
-    @Autowired
-    ConversionService conversionService;
+    GeoPointConverter geoPointConverter = new GeoPointConverter();
 
     @Override
     public PersistentAddressDTO convert(AddressModel source) {
@@ -26,7 +25,7 @@ public class AddressModelPersistentConverter implements Converter<AddressModel, 
                 .apartment(source.getApartment())
                 .house(source.getHouse())
                 .visible(source.isVisible())
-                .geoPointDTO(conversionService.convert(source.getGeoPoint(), GeoPointDTO.class))
+                .geoPointDTO(geoPointConverter.convert(source.getGeoPoint()))
                 .build();
     }
 
