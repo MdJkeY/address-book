@@ -164,6 +164,25 @@ class AddressBookApplicationTests {
 
 	@Test
 	@Transactional
+	void geoPointDtoConverterTest() {
+		var geoPointDto = GeoPointDTO.builder()
+				.lat(100)
+				.lon(100)
+				.coordinateSystem(CoordinateSystem.WGS84)
+				.build();
+
+		var geoPoint = geoPointDtoConverter.convert(geoPointDto);
+
+
+		Assert.isTrue(geoPointDto.getLat() == geoPoint.getLat(), "Wrong lat parsed");
+		Assert.isTrue(geoPointDto.getLon() == geoPoint.getLon(), "Wrong lon parsed");
+		Assert.isTrue(geoPointDto.getCoordinateSystem()
+				.equals(geoPoint.getCoordinateSystem()), "Wrong coordinate system parsed");
+	}
+
+
+	@Test
+	@Transactional
 	void addressUpdateTest() {
 		var customAddress = AddressModel.builder()
 				.cityId("12")
