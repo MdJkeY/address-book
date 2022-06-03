@@ -2,16 +2,17 @@ package kz.ks.storefront.addressbook;
 
 
 import kz.ks.storefront.addressbook.controller.AddressController;
+import kz.ks.storefront.addressbook.controller.dto.AddressDTO;
+import kz.ks.storefront.addressbook.controller.dto.GeoPointDTO;
+import kz.ks.storefront.addressbook.converter.GeoPointDtoConverter;
 import kz.ks.storefront.addressbook.enums.CoordinateSystem;
 import kz.ks.storefront.addressbook.model.AddressModel;
 import kz.ks.storefront.addressbook.model.CustomerModel;
 import kz.ks.storefront.addressbook.model.GeoPoint;
-import kz.ks.storefront.addressbook.repository.AddressRepository;
 import kz.ks.storefront.addressbook.repository.CustomerRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.convert.ConversionService;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
@@ -23,11 +24,9 @@ class AddressBookApplicationTests {
 	@Autowired
 	private CustomerRepository customerRepository;
 	@Autowired
-	private AddressRepository addressRepository;
-	@Autowired
 	private AddressController addressController;
 	@Autowired
-	private ConversionService conversionService;
+	private GeoPointDtoConverter geoPointDtoConverter;
 
 	@Test
 	@Transactional
@@ -160,6 +159,75 @@ class AddressBookApplicationTests {
 				"Wrong secondAddress cityId returned");
 		Assert.doesNotContain(result.get(result.size() - 1).getCityId(), nonRequiredCityId,
 				"Contains non required cityId");
+	}
+
+
+	@Test
+	@Transactional
+	void addressUpdateTest() {
+		var customAddress = AddressModel.builder()
+				.cityId("12")
+				.streetName("Abay")
+				.house("78B")
+				.apartment("98")
+				.geoPoint(
+						GeoPoint.builder()
+								.lat(51)
+								.lon(71)
+								.coordinateSystem(CoordinateSystem.WGS84)
+								.build()
+				)
+				.visible(true)
+				.build();
+
+		var customer = CustomerModel.builder()
+				.gci("46238422")
+				.addresses(
+						List.of(customAddress)
+				)
+				.build();
+
+		customer.getAddresses().forEach(
+				a -> a.setOwner(customer)
+		);
+
+		customerRepository.save(customer);
+
+
+		var geoPointDto = GeoPointDTO.builder()
+				.lat(90)
+				.lon(22)
+				.coordinateSystem(CoordinateSystem.WGS84)
+				.build();
+
+
+		var updateAddress = AddressDTO.builder()
+				.cityId("89")
+				.streetName("Chopin")
+				.house("6A")
+				.apartment("44")
+				.geoPointDTO(geoPointDto)
+				.visible(true)
+				.customerGci(customer.getGci())
+				.build();
+
+
+		addressController.update(customAddress.getId(), updateAddress);
+
+		var result = customer.getAddresses().get(0);
+
+		Assert.isTrue(result.getCityId().equals(updateAddress.getCityId()),
+				"Wrong cityId, value has not been updated");
+		Assert.isTrue(result.getStreetName().equals(updateAddress.getStreetName()),
+				"Wrong streetName, value has not been updated");
+		Assert.isTrue(result.getHouse().equals(updateAddress.getHouse()),
+				"Wrong house, value has not been updated");
+		Assert.isTrue(result.getApartment().equals(updateAddress.getApartment()),
+				"Wrong apartment, value has not been updated");
+		Assert.isTrue(result.getGeoPoint().equals(geoPointDtoConverter.convert(updateAddress.getGeoPointDTO())),
+				"Wrong geoPoint, value has not been updated");
+		Assert.isTrue(result.isVisible() == updateAddress.isVisible(),
+				"Wrong visible flag, flag has not been updated");
 	}
 
 }
