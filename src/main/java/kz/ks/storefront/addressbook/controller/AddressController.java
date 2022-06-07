@@ -3,8 +3,8 @@ package kz.ks.storefront.addressbook.controller;
 import kz.ks.storefront.addressbook.controller.dto.AddressDTO;
 import kz.ks.storefront.addressbook.controller.dto.PersistentAddressDTO;
 import kz.ks.storefront.addressbook.converter.AddressModelPersistentConverter;
-import kz.ks.storefront.addressbook.converter.GeoPointDtoConverter;
 import kz.ks.storefront.addressbook.model.AddressModel;
+import kz.ks.storefront.addressbook.model.GeoPoint;
 import kz.ks.storefront.addressbook.repository.AddressRepository;
 import kz.ks.storefront.addressbook.repository.CustomerRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,6 @@ public class AddressController {
     private final AddressRepository addressRepository;
     private final CustomerRepository customerRepository;
     private final ConversionService conversionService;
-    private final GeoPointDtoConverter geoPointDtoConverter;
     private final AddressModelPersistentConverter addressModelPersistentConverter;
 
     @GetMapping("/address/find")
@@ -49,7 +48,6 @@ public class AddressController {
 
     @PostMapping("/address")
     public PersistentAddressDTO create(@RequestBody AddressDTO addressDTO) {
-//        Clarification is required!!!
         var existingCustomer =
                 customerRepository.findByGci(addressDTO.getCustomerGci())
                         .orElseThrow(
@@ -57,14 +55,12 @@ public class AddressController {
                         );
 
         var newAddress = Objects.requireNonNull(conversionService.convert(addressDTO, AddressModel.class));
-
-        assert newAddress != null;
         newAddress.setOwner(existingCustomer);
 
         addressRepository.save(newAddress);
 
 
-        return addressModelPersistentConverter.convert(newAddress);
+        return conversionService.convert(newAddress, PersistentAddressDTO.class);
     }
 
     @DeleteMapping("/address/{addressId}")
@@ -96,7 +92,7 @@ public class AddressController {
                     a.setApartment(addressDTO.getApartment());
                     a.setOwner(existingCustomer);
                     a.setVisible(addressDTO.isVisible());
-                    a.setGeoPoint(geoPointDtoConverter.convert(addressDTO.getGeoPointDTO()));
+                    a.setGeoPoint(conversionService.convert(addressDTO.getGeoPointDTO(), GeoPoint.class));
                     addressRepository.save(a);
                 },
                 () -> {

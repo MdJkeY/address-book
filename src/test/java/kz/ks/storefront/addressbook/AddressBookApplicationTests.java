@@ -34,13 +34,14 @@ class AddressBookApplicationTests {
 		String gci = "7359432823";
 		String cityId = "78";
 
-		var address = AddressModel.builder()
+
+		var address = AddressDTO.builder()
 				.cityId(cityId)
 				.streetName("Abay")
 				.house("12")
 				.apartment("98")
-				.geoPoint(
-						GeoPoint.builder()
+				.geoPointDTO(
+						GeoPointDTO.builder()
 								.lat(51)
 								.lon(71)
 								.coordinateSystem(CoordinateSystem.WGS84)
@@ -67,7 +68,7 @@ class AddressBookApplicationTests {
 		var customer = CustomerModel.builder()
 				.gci(gci)
 				.addresses(
-						List.of(address, invisibleAddress)
+						List.of(invisibleAddress)
 				)
 				.build();
 
@@ -77,11 +78,17 @@ class AddressBookApplicationTests {
 
 		customerRepository.save(customer);
 
-		var result = addressController.getListByIdAndCityId(gci, cityId);
+		address.setCustomerGci(customer.getGci());
 
-		Assert.notEmpty(result, "Visible address not returned");
-		Assert.isTrue(result.size() == 1, "Not only visible address returned");
-		Assert.isTrue(result.get(0).getId().equals(address.getId()), "Wrong address returned");
+		var firstResult = addressController.create(address);
+
+		var secondResult = addressController.getListByIdAndCityId(gci, cityId);
+
+		secondResult.add(firstResult);
+
+		Assert.notEmpty(secondResult, "Visible address not returned");
+		Assert.isTrue(secondResult.size() == 1, "Not only visible address returned");
+		Assert.isTrue(secondResult.get(0).getId().equals(firstResult.getId()), "Wrong address returned");
 	}
 
 
