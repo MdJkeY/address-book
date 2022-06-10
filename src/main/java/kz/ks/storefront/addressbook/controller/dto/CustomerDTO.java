@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Schema(name = "CustomerDTO", description = "POJO without database id field. ")
 public class CustomerDTO {
     @Schema(
             description = "Global Customer ID",

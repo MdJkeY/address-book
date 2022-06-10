@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Schema(name = "AddressDTO", description = "POJO without database id field. ")
 public class AddressDTO {
     @JsonProperty("city_id")
     @Schema(

@@ -7,6 +7,7 @@ import lombok.*;
 @Builder
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Schema(name = "PersistentCustomerDTO", description = "POJO with database id field. ")
 public class PersistentCustomerDTO {
     @Schema(
             description = "Customer ID",
