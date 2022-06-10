@@ -1,5 +1,12 @@
 package kz.ks.storefront.addressbook.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import kz.ks.storefront.addressbook.controller.dto.CustomerDTO;
 import kz.ks.storefront.addressbook.controller.dto.PersistentCustomerDTO;
 import kz.ks.storefront.addressbook.model.CustomerModel;
@@ -21,6 +28,11 @@ public class CustomerController {
     private final ConversionService conversionService;
 
     @GetMapping("/customer/list")
+    @Operation(summary = "Get customer list. ")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success",
+                    content = {@Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = PersistentCustomerDTO.class)))})})
     public List<PersistentCustomerDTO> getList() {
         return StreamSupport.stream(customerRepository.findAll().spliterator(), false)
                 .map(a -> conversionService.convert(a, PersistentCustomerDTO.class))
@@ -28,7 +40,21 @@ public class CustomerController {
     }
 
     @GetMapping("/customer/{customerID}")
-    public PersistentCustomerDTO findById(@PathVariable("customerID") long customerID) {
+    @Operation(summary = "Get customer information by Customer-ID. ")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = PersistentCustomerDTO.class))}),
+            @ApiResponse(responseCode = "404", description = "No such customer",
+                    content = @Content)})
+    public PersistentCustomerDTO findById(
+            @PathVariable("customerID")
+            @Parameter(
+                    description = "Customer ID",
+                    example = "95280",
+                    required = true
+            )
+            long customerID) {
         var existingCustomer = customerRepository.findById(customerID);
 
         return existingCustomer.map(
@@ -39,7 +65,18 @@ public class CustomerController {
     }
 
     @PostMapping("/customer")
-    public PersistentCustomerDTO create(@RequestBody CustomerDTO customerDTO) {
+    @Operation(summary = "Creating customer by Customer Data Transfer Object. ")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = PersistentCustomerDTO.class))})})
+    public PersistentCustomerDTO create(
+            @RequestBody
+            @Parameter(
+                    description = "Customer Data Transfer Object",
+                    required = true
+            )
+            CustomerDTO customerDTO) {
         var newCustomer = CustomerModel.builder()
                 .gci(customerDTO.getGci())
                 .build();
@@ -49,7 +86,21 @@ public class CustomerController {
     }
 
     @DeleteMapping("/customer/{customerID}")
-    public void delete(@PathVariable("customerID") long customerID) {
+    @Operation(summary = "Deleting customer by Customer-ID. ")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = PersistentCustomerDTO.class))}),
+            @ApiResponse(responseCode = "404", description = "No such customer",
+                    content = @Content)})
+    public void delete(
+            @PathVariable("customerID")
+            @Parameter(
+                    description = "Customer ID",
+                    example = "800",
+                    required = true
+            )
+            long customerID) {
         customerRepository.findById(customerID)
                 .ifPresentOrElse(
                         customerRepository::delete,
@@ -59,8 +110,27 @@ public class CustomerController {
     }
 
     @PostMapping("/customer/{customerID}")
-    public void update(@PathVariable(name = "customerID") long customerID,
-                       @RequestBody CustomerDTO customerDTO) {
+    @Operation(summary = "Updating customer by Customer-ID. ")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = PersistentCustomerDTO.class))}),
+            @ApiResponse(responseCode = "404", description = "No such customer",
+                    content = @Content)})
+    public void update(
+            @PathVariable(name = "customerID")
+            @Parameter(
+                    description = "Customer ID",
+                    example = "1033",
+                    required = true
+            )
+            long customerID,
+            @RequestBody
+            @Parameter(
+                    description = "Customer Data Transfer Object",
+                    required = true
+            )
+            CustomerDTO customerDTO) {
         var existingCustomer = customerRepository.findById(customerID);
 
         existingCustomer.ifPresentOrElse(
