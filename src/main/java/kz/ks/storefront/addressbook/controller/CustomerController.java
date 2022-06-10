@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import kz.ks.storefront.addressbook.controller.dto.CustomerDTO;
 import kz.ks.storefront.addressbook.controller.dto.PersistentCustomerDTO;
 import kz.ks.storefront.addressbook.model.CustomerModel;
@@ -23,6 +24,8 @@ import java.util.stream.StreamSupport;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "Customers",
+        description = "CRUD operations on customers")
 public class CustomerController {
     private final CustomerRepository customerRepository;
     private final ConversionService conversionService;
