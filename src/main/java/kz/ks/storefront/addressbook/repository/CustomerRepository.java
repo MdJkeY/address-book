@@ -1,7 +1,6 @@
 package kz.ks.storefront.addressbook.repository;
 
 import kz.ks.storefront.addressbook.model.CustomerModel;
-
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

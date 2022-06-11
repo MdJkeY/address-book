@@ -24,6 +24,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @RestController
 @RequiredArgsConstructor
@@ -62,8 +64,11 @@ public class AddressController {
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND)
         );
 
-        AddressModelPersistentConverter addressModelPersistentConverter = new AddressModelPersistentConverter();
-        return addressModelPersistentConverter.converting(existingCustomer.getAddressesByCityId(cityId));
+        return StreamSupport.stream(
+                        addressRepository.findByOwnerAndCityIdAndVisible(existingCustomer, cityId, true)
+                                .spliterator(), false)
+                .map(a -> conversionService.convert(a, PersistentAddressDTO.class))
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/address/{addressId}")

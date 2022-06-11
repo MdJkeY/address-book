@@ -2,7 +2,8 @@ package kz.ks.storefront.addressbook.controller.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
+import lombok.Builder;
+import lombok.Data;
 
 @Builder
 @Data

@@ -33,8 +33,8 @@ public class CustomerModel extends BaseEntity {
 
     public List<AddressModel> getAddressesByCityId(String cityId) {
         List<AddressModel> addressModels = new ArrayList<>();
-        for(AddressModel addressModel : addresses) {
-            if(addressModel.isVisible() && addressModel.getCityId().equals(cityId)) {
+        for (AddressModel addressModel : addresses) {
+            if (addressModel.isVisible() && addressModel.getCityId().equals(cityId)) {
                 addressModels.add(addressModel);
             }
         }

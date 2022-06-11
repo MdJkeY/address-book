@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 public class AddressModelConverter implements Converter<AddressModel, AddressDTO> {
     @Autowired
     ConversionService conversionService;
+
     @Override
     public AddressDTO convert(AddressModel source) {
         return AddressDTO.builder()
