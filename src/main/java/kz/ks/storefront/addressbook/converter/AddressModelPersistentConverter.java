@@ -5,9 +5,6 @@ import kz.ks.storefront.addressbook.model.AddressModel;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-
 
 @Component
 public class AddressModelPersistentConverter implements Converter<AddressModel, PersistentAddressDTO> {

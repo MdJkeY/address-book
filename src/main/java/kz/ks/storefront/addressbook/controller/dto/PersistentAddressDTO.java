@@ -20,7 +20,7 @@ public class PersistentAddressDTO {
     @JsonProperty("city_id")
     @Schema(
             description = "City ID",
-            example = "750000000"
+            example = "48"
     )
     private String cityId;
 
@@ -51,7 +51,7 @@ public class PersistentAddressDTO {
 
     @Schema(
             description = "Address visibility flag",
-            example = "750000000"
+            example = "true"
     )
     private boolean visible;
 
@@ -59,7 +59,7 @@ public class PersistentAddressDTO {
     @JsonProperty("customer_gci")
     @Schema(
             description = "Global Customer ID",
-            example = "750000000"
+            example = "1374"
     )
     private String customerGci;
 }
